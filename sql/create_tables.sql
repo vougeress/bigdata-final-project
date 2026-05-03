@@ -1,0 +1,4 @@
+-- The IEEE-CIS dataset has hundreds of columns.
+-- Stage I table DDL is generated reproducibly by scripts/build_projectdb.py
+-- from the CSV headers and sampled values.
+-- Generated DDL is written to output/generated_create_tables.sql.
