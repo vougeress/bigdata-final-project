@@ -79,3 +79,30 @@ To generate and inspect PostgreSQL DDL without connecting to the cluster:
 ```sh
 python3 scripts/build_projectdb.py --generate-only
 ```
+
+## Stage II
+
+Stage II creates Hive storage over the Sqoop Avro imports, prepares an optimized partitioned/bucketed table, and exports EDA query results.
+
+Run on the IU Hadoop cluster after Stage I:
+
+```sh
+export TEAM_NAME=team20
+export PGPASSWORD='your-password'
+bash scripts/stage2.sh
+```
+
+If HiveServer2 cannot open Beeline sessions, run the allowed Spark SQL implementation instead:
+
+```sh
+export TEAM_NAME=team20
+bash scripts/stage2_spark.sh
+```
+
+After the script completes, create Superset datasets for `q1_results` ... `q5_results`, export charts as `q1.jpg` ... `q5.jpg`, and place them in `output/`.
+
+Check Stage II script quality:
+
+```sh
+bash scripts/lint_stage2.sh
+```
