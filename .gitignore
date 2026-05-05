@@ -5,3 +5,7 @@ __pycache__/
 .env
 .venv/
 venv/
+.idea/
+output/q*_parts/
+output/*.java
+output/*.avsc

@@ -1,4 +1,4 @@
--- Q1: Fraud rate by product category
+﻿-- Q1: Fraud rate by product category
 USE team20_projectdb;
 
 DROP TABLE IF EXISTS q1_results;

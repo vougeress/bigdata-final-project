@@ -1,0 +1,11 @@
+# Force LF line endings for scripts and text files
+*.sh    text eol=lf
+*.py    text eol=lf
+*.hql   text eol=lf
+*.sql   text eol=lf
+*.md    text eol=lf
+*.txt   text eol=lf
+*.avsc  text eol=lf
+*.json  text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf

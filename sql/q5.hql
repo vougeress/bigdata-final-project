@@ -1,4 +1,4 @@
--- Q5: Daily transaction volume and fraud rate over time
+﻿-- Q5: Daily transaction volume and fraud rate over time
 -- transactiondt is seconds offset from a reference date
 USE team20_projectdb;
 

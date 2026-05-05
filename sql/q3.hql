@@ -1,4 +1,4 @@
--- Q3: Fraud rate by card network (card4) and card type (card6)
+﻿-- Q3: Fraud rate by card network (card4) and card type (card6)
 USE team20_projectdb;
 
 DROP TABLE IF EXISTS q3_results;

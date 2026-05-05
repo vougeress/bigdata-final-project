@@ -1,4 +1,4 @@
--- Q4: Top email domains by fraud rate (min 100 transactions)
+﻿-- Q4: Top email domains by fraud rate (min 100 transactions)
 USE team20_projectdb;
 
 DROP TABLE IF EXISTS q4_results;

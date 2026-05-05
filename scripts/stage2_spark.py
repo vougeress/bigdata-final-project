@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # pylint: disable=C0301
 """Stage II: create Hive tables and run EDA queries using Spark SQL."""
 

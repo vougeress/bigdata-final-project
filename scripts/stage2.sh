@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 set -euo pipefail
 # Stage II entry point: Hive table setup, partitioned/bucketed table, and EDA queries.
 # Runs on the IU Hadoop cluster from the project root directory.
@@ -7,3 +7,6 @@ set -euo pipefail
 export TEAM_NAME
 
 bash scripts/stage2_spark.sh
+
+echo "Generating EDA charts..."
+python3 scripts/create_stage2_charts.py

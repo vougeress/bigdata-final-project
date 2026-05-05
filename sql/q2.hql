@@ -1,4 +1,4 @@
--- Q2: Fraud rate and average amount by transaction amount band
+﻿-- Q2: Fraud rate and average amount by transaction amount band
 USE team20_projectdb;
 
 DROP TABLE IF EXISTS q2_results;

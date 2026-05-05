@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Create PostgreSQL tables from project CSV files and load them reproducibly."""
 
 import csv
