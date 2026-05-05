@@ -1,2 +1,2 @@
--- Data loading is executed by scripts/build_projectdb.py with PostgreSQL COPY.
+﻿-- Data loading is executed by scripts/build_projectdb.py with PostgreSQL COPY.
 -- This keeps column lists aligned with the generated table definitions.
