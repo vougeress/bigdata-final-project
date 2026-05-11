@@ -1,0 +1,27 @@
+{
+  "best_model_by_test_auc_pr": "gbt",
+  "execution_mode": "full",
+  "label_proxy": "isFraud",
+  "models": [
+    {
+      "best_params_json": "{\"maxDepth\": 7, \"stepSize\": 0.2}",
+      "cv_metric_pr": 0.9256071576860977,
+      "model_name": "gbt",
+      "test_accuracy": 0.8447697718164717,
+      "test_auc_pr": 0.9315043931081807,
+      "test_auc_roc": 0.9224285714897292,
+      "test_f1": 0.8446437217335041
+    },
+    {
+      "best_params_json": "{\"maxDepth\": 8, \"numTrees\": 60}",
+      "cv_metric_pr": 0.8902578328653193,
+      "model_name": "rf",
+      "test_accuracy": 0.7949619694119572,
+      "test_auc_pr": 0.8859480472989085,
+      "test_auc_roc": 0.8701940000447371,
+      "test_f1": 0.7946161970065181
+    }
+  ],
+  "seed": 20,
+  "selection_metric": "areaUnderPR"
+}

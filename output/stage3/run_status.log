@@ -1,0 +1,77 @@
+[2026-05-11 12:04:20 UTC] Stage III started (mode=full, seed=20)
+[2026-05-11 12:04:20 UTC] Requested model order: gbt,rf
+[2026-05-11 12:04:20 UTC] Previous-run importance pruning is enabled (max numeric features=120, max string features=16).
+[2026-05-11 12:04:39 UTC] Loading Stage II Hive tables from team20_projectdb.
+[2026-05-11 12:04:43 UTC] Loaded team20_projectdb.train_identity
+[2026-05-11 12:04:44 UTC] Balancing labeled dataset before train/test split.
+[2026-05-11 12:04:54 UTC] Balancing tree training set with negative fraction 0.0363 for target ratio 1.00:1.
+[2026-05-11 12:05:10 UTC] Balanced labeled dataset before split (tree sample) rows: 40987
+[2026-05-11 12:05:11 UTC] Using sampled training split for tree model: {0: 20324, 1: 20663}
+[2026-05-11 12:05:12 UTC] Balanced labeled dataset rows: 40987
+[2026-05-11 12:05:14 UTC] Training split rows: 28760
+[2026-05-11 12:05:16 UTC] Test split rows: 12227
+[2026-05-11 12:05:16 UTC] Saving train/test JSON artifacts for the repository and HDFS.
+[2026-05-11 12:05:20 UTC] Merged /user/team20/project/data/train/*.json -> data/train.json
+[2026-05-11 12:05:24 UTC] Merged /user/team20/project/data/test/*.json -> data/test.json
+[2026-05-11 12:05:24 UTC] Fitting feature pipeline on balanced training split; test split comes from the same balanced corpus.
+[2026-05-11 12:06:17 UTC] Feature selection summary: {'include_numeric': 386, 'include_string': 29, 'drop_constant_or_empty': 3, 'drop_high_cardinality_low_coverage': 5, 'include_string_topk': 10, 'drop_high_null': 9, 'drop_dominant_value': 1}
+[2026-05-11 12:06:17 UTC] Included numeric features: 386
+[2026-05-11 12:06:17 UTC] Included string features: 39
+[2026-05-11 12:06:17 UTC] Top categories kept for id_01: 10
+[2026-05-11 12:06:17 UTC] Top categories kept for id_05: 10
+[2026-05-11 12:06:17 UTC] Top categories kept for id_06: 10
+[2026-05-11 12:06:17 UTC] Top categories kept for id_11: 10
+[2026-05-11 12:06:17 UTC] Top categories kept for id_13: 10
+[2026-05-11 12:06:17 UTC] Top categories kept for id_17: 10
+[2026-05-11 12:06:17 UTC] Top categories kept for id_30: 10
+[2026-05-11 12:06:17 UTC] Top categories kept for id_33: 10
+[2026-05-11 12:06:17 UTC] Top categories kept for p_emaildomain: 10
+[2026-05-11 12:06:17 UTC] Top categories kept for r_emaildomain: 10
+[2026-05-11 12:06:17 UTC] Class weights on balanced training split: {0: 1.0140328608701783, 1: 0.9863502297825639}
+[2026-05-11 12:06:17 UTC] Loaded previous-run feature importance for pruning from: feature_importance_gbt_backup.csv,feature_importance_rf.csv
+[2026-05-11 12:06:17 UTC] Importance-based pruning enabled. Numeric features kept: 386 -> 120. String features kept: 39 -> 16. Estimated transformed dimensions before variance filter: ~219.
+[2026-05-11 12:06:17 UTC] Top kept string features: r_emaildomain,p_emaildomain,card6,m4,m5,m6,productcd,id_17,id_36,id_11,card4,id_12,id_01,id_28,id_29,id_35
+[2026-05-11 12:06:17 UTC] Final numeric features after pruning: 120
+[2026-05-11 12:06:17 UTC] Final string features after pruning: 16
+[2026-05-11 12:07:27 UTC] Fitting preprocessing pipeline on sampled train (numeric strategy=median, imputer batches=4).
+[2026-05-11 12:08:02 UTC] Vectorized training split rows: 28760
+[2026-05-11 12:08:04 UTC] Vectorized test split rows: 12227
+[2026-05-11 12:08:05 UTC] Training model family gbt with 9 parameter combinations.
+[2026-05-11 12:09:36 UTC] Validation summary for gbt combo 1/9: areaUnderPR=0.886828, ETA ~712s.
+[2026-05-11 12:10:59 UTC] Validation summary for gbt combo 2/9: areaUnderPR=0.897708, ETA ~603s.
+[2026-05-11 12:12:19 UTC] Validation summary for gbt combo 3/9: areaUnderPR=0.907751, ETA ~504s.
+[2026-05-11 12:14:20 UTC] Validation summary for gbt combo 4/9: areaUnderPR=0.902640, ETA ~466s.
+[2026-05-11 12:16:25 UTC] Validation summary for gbt combo 5/9: areaUnderPR=0.913839, ETA ~398s.
+[2026-05-11 12:18:31 UTC] Validation summary for gbt combo 6/9: areaUnderPR=0.920810, ETA ~312s.
+[2026-05-11 12:22:06 UTC] Validation summary for gbt combo 7/9: areaUnderPR=0.910352, ETA ~240s.
+[2026-05-11 12:25:38 UTC] Validation summary for gbt combo 8/9: areaUnderPR=0.918553, ETA ~131s.
+[2026-05-11 12:28:42 UTC] Validation summary for gbt combo 9/9: areaUnderPR=0.925607, ETA ~0s.
+[2026-05-11 12:29:52 UTC] Saved gbt as /user/team20/project/models/model1
+[2026-05-11 12:29:55 UTC] Merged /user/team20/project/output/model1_predictions/*.csv -> output/model1_predictions.csv
+[2026-05-11 12:29:55 UTC] Training model family rf with 9 parameter combinations.
+[2026-05-11 12:30:37 UTC] Validation summary for rf combo 1/9: areaUnderPR=0.847403, ETA ~315s.
+[2026-05-11 12:31:17 UTC] Validation summary for rf combo 2/9: areaUnderPR=0.872029, ETA ~281s.
+[2026-05-11 12:32:00 UTC] Validation summary for rf combo 3/9: areaUnderPR=0.887113, ETA ~247s.
+[2026-05-11 12:32:42 UTC] Validation summary for rf combo 4/9: areaUnderPR=0.850668, ETA ~206s.
+[2026-05-11 12:33:25 UTC] Validation summary for rf combo 5/9: areaUnderPR=0.874186, ETA ~166s.
+[2026-05-11 12:34:12 UTC] Validation summary for rf combo 6/9: areaUnderPR=0.889400, ETA ~128s.
+[2026-05-11 12:34:54 UTC] Validation summary for rf combo 7/9: areaUnderPR=0.851413, ETA ~85s.
+[2026-05-11 12:35:39 UTC] Validation summary for rf combo 8/9: areaUnderPR=0.874574, ETA ~43s.
+[2026-05-11 12:36:31 UTC] Validation summary for rf combo 9/9: areaUnderPR=0.890258, ETA ~0s.
+[2026-05-11 12:36:57 UTC] Saved rf as /user/team20/project/models/model2
+[2026-05-11 12:37:00 UTC] Merged /user/team20/project/output/model2_predictions/*.csv -> output/model2_predictions.csv
+[2026-05-11 12:37:10 UTC] Merged /user/team20/project/output/evaluation/*.csv -> output/evaluation.csv
+[2026-05-11 12:37:13 UTC] Merged /user/team20/project/output/evaluation/*.csv -> output/evaluation.csv
+[2026-05-11 12:37:15 UTC] Mirrored output/stage3/model_metrics.csv -> /user/team20/project/output/stage3
+[2026-05-11 12:37:17 UTC] Mirrored output/stage3/model_metrics.csv -> /user/team20/project/output/stage3
+[2026-05-11 12:37:19 UTC] Mirrored output/stage3/model_comparison.json -> /user/team20/project/output/stage3
+[2026-05-11 12:37:21 UTC] Mirrored output/stage3/feature_profile.csv -> /user/team20/project/output/stage3
+[2026-05-11 12:37:23 UTC] Mirrored output/stage3/feature_importance_gbt.csv -> /user/team20/project/output/stage3
+[2026-05-11 12:37:25 UTC] Mirrored output/stage3/feature_importance_rf.csv -> /user/team20/project/output/stage3
+[2026-05-11 12:37:27 UTC] Mirrored output/stage3/prediction_sample.csv -> /user/team20/project/output/stage3
+[2026-05-11 12:37:29 UTC] Mirrored output/evaluation.csv -> /user/team20/project/output/stage3
+[2026-05-11 12:37:31 UTC] Mirrored output/stage3/evaluation.csv -> /user/team20/project/output/stage3
+[2026-05-11 12:37:32 UTC] Mirrored output/stage3/evaluation.csv -> /user/team20/project/output/stage3
+[2026-05-11 12:37:34 UTC] Mirrored output/stage3/validation_progress.csv -> /user/team20/project/output/stage3
+[2026-05-11 12:37:36 UTC] Mirrored output/stage3/run_status.log -> /user/team20/project/output/stage3
+[2026-05-11 12:37:36 UTC] Stage III modeling complete.

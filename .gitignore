@@ -9,3 +9,7 @@ venv/
 output/q*_parts/
 output/*.java
 output/*.avsc
+/stage3/
+.pylint.d/
+backups/
+.DS_Store

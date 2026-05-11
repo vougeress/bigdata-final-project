@@ -1,0 +1,2 @@
+model_name,cv_metric_pr,test_auc_roc,test_auc_pr,test_f1,test_accuracy,best_params_json
+rf,0.8869814098441323,0.8639069709722359,0.880270712901323,0.7859303933655202,0.786210844851558,"{""maxDepth"": 8, ""numTrees"": 40}"
