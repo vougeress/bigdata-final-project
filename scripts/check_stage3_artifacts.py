@@ -80,16 +80,14 @@ def check_evaluation():
     """Check the combined evaluation file contains both model families."""
     path = abs_path("output/evaluation.csv")
     with open(path, "r", newline="", encoding="utf-8") as handle:
-        rows = list(csv.reader(handle))
+        rows = list(csv.DictReader(handle, escapechar="\\"))
     if not rows:
         fail("output/evaluation.csv is empty")
-    data_rows = rows[1:]
     models = sorted(
         {
-            cell.strip()
-            for row in data_rows
-            for cell in row
-            if cell and cell.strip() in ("gbt", "rf")
+            row.get("model_name", "").strip()
+            for row in rows
+            if row.get("model_name", "").strip()
         }
     )
     if models != ["gbt", "rf"]:

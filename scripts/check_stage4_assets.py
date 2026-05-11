@@ -27,6 +27,11 @@ REQUIRED_FILES = [
     "output/stage3/feature_profile.csv",
     "output/stage3/feature_importance_gbt.csv",
     "output/stage3/feature_importance_rf.csv",
+    "output/stage4/superset_dashboard.sqlite",
+    "output/stage4/superset_dashboard_manifest.json",
+    "output/stage4/model_metrics_long.csv",
+    "output/stage4/best_model_summary.csv",
+    "output/stage4/feature_profile_summary.csv",
     "reports/dashboard.md",
     "reports/stage3.md",
 ]
@@ -53,11 +58,44 @@ def check_exists():
             fail("Empty file {}".format(relative_path))
 
 
+def check_sqlite_database():
+    """Check the generated SQLite database contains dashboard tables."""
+    import sqlite3
+
+    expected_tables = set([
+        "q1_product_risk",
+        "q2_amount_band_risk",
+        "q3_card_risk",
+        "q4_email_domain_risk",
+        "q5_daily_risk",
+        "model_evaluation",
+        "model_metrics_long",
+        "best_model_summary",
+        "feature_importance_gbt",
+        "feature_importance_rf",
+        "feature_profile",
+        "feature_profile_summary",
+    ])
+    path = full_path("output/stage4/superset_dashboard.sqlite")
+    connection = sqlite3.connect(path)
+    try:
+        rows = connection.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'table'"
+        ).fetchall()
+    finally:
+        connection.close()
+    tables = set(row[0] for row in rows)
+    missing = expected_tables - tables
+    if missing:
+        fail("SQLite dashboard database missing tables: {}".format(sorted(missing)))
+
+
 def main():
     """Run Stage IV local asset validation."""
     check_exists()
+    check_sqlite_database()
     print("OK: Stage IV local dashboard source assets are present.")
-    print("Manual Superset work is still required for dashboard creation/publication.")
+    print("OK: Superset-ready SQLite dashboard database is present.")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,8 @@
+inclusion_decision,feature_count
+drop_constant_or_empty,3
+drop_dominant_value,1
+drop_high_cardinality_low_coverage,5
+drop_high_null,9
+include_numeric,386
+include_string,29
+include_string_topk,10

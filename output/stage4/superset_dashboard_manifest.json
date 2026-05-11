@@ -1,0 +1,24 @@
+{
+  "dashboard_title": "IEEE-CIS Fraud Risk: EDA to Spark ML",
+  "database": "team20_stage4_dashboard",
+  "helper_csvs": [
+    "output/stage4/model_metrics_long.csv",
+    "output/stage4/best_model_summary.csv",
+    "output/stage4/feature_profile_summary.csv"
+  ],
+  "sqlite_path": "output/stage4/superset_dashboard.sqlite",
+  "tables": [
+    "q1_product_risk",
+    "q2_amount_band_risk",
+    "q3_card_risk",
+    "q4_email_domain_risk",
+    "q5_daily_risk",
+    "model_evaluation",
+    "feature_importance_gbt",
+    "feature_importance_rf",
+    "feature_profile",
+    "model_metrics_long",
+    "best_model_summary",
+    "feature_profile_summary"
+  ]
+}

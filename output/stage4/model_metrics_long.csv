@@ -1,0 +1,9 @@
+model_name,metric_name,metric_value
+gbt,test_auc_pr,0.9315043931081807
+gbt,test_auc_roc,0.9224285714897292
+gbt,test_f1,0.8446437217335041
+gbt,test_accuracy,0.8447697718164717
+rf,test_auc_pr,0.8859480472989085
+rf,test_auc_roc,0.8701940000447371
+rf,test_f1,0.7946161970065181
+rf,test_accuracy,0.7949619694119572
