@@ -1,37 +1,61 @@
-﻿from __future__ import print_function
+from __future__ import print_function
 
+import csv
 import os
+import re
 import sys
+import tempfile
+
 
 OUTPUT_DIR = os.path.join("output")
 
 
+def configure_matplotlib_cache():
+    """Use a project-local writable Matplotlib cache if none was configured."""
+    cache_dir = os.path.join(tempfile.gettempdir(), "stage2_matplotlib_cache")
+    os.makedirs(cache_dir, exist_ok=True)
+    if "MPLCONFIGDIR" not in os.environ:
+        os.environ["MPLCONFIGDIR"] = cache_dir
+    if "XDG_CACHE_HOME" not in os.environ:
+        os.environ["XDG_CACHE_HOME"] = cache_dir
+
+
 def require_libs():
-    """Check that matplotlib and pandas are available."""
+    """Check that matplotlib is available."""
+    configure_matplotlib_cache()
     try:
         import matplotlib  # pylint: disable=import-outside-toplevel
-        import pandas  # pylint: disable=import-outside-toplevel
-        return matplotlib, pandas
+        return matplotlib
     except ImportError as exc:
-        print("ERROR: {}. Install matplotlib and pandas.".format(exc))
+        print("ERROR: {}. Install matplotlib.".format(exc))
         sys.exit(1)
 
 
 def load_csv(name):
-    """Load output/<name>.csv into a pandas DataFrame."""
-    import pandas as pd  # pylint: disable=import-outside-toplevel
+    """Load output/<name>.csv into a list of dictionaries."""
     path = os.path.join(OUTPUT_DIR, "{}.csv".format(name))
     if not os.path.exists(path):
         print("SKIP: {} not found.".format(path))
         return None
-    df = pd.read_csv(path)
-    df.columns = [c.strip() for c in df.columns]
-    return df
+    with open(path, "r", newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        return [
+            {key.strip(): value for key, value in row.items()}
+            for row in reader
+        ]
 
 
-def pct(series):
-    """Convert a 0-1 fraud_rate series to percentage for display."""
-    return series * 100.0
+def number(row, column):
+    """Return a CSV cell as a float."""
+    value = row.get(column, "")
+    if value == "":
+        return 0.0
+    return float(value)
+
+
+def pct(row):
+    """Convert a row's 0-1 fraud_rate value to percentage for display."""
+    return number(row, "fraud_rate") * 100.0
 
 
 def save_chart(fig, name):
@@ -41,36 +65,41 @@ def save_chart(fig, name):
     print("Saved: {}".format(path))
 
 
-def chart_q1(df):
-    """Q1: Horizontal bar chart — fraud rate by product category."""
+def chart_q1(rows):
+    """Q1: Horizontal bar chart - fraud rate by product category."""
     import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
     fig, ax = plt.subplots(figsize=(8, 4))
-    df_s = df.sort_values("fraud_rate", ascending=True)
-    rates = pct(df_s["fraud_rate"])
-    ax.barh(df_s["productcd"], rates, color="#e05c5c")
+    sorted_rows = sorted(rows, key=lambda row: number(row, "fraud_rate"))
+    labels = [row["productcd"] for row in sorted_rows]
+    rates = [pct(row) for row in sorted_rows]
+    ax.barh(labels, rates, color="#e05c5c")
     ax.set_xlabel("Fraud Rate (%)")
     ax.set_title("Q1: Fraud Rate by Product Category")
-    for i, val in enumerate(rates):
-        ax.text(val + 0.05, i, "{:.2f}%".format(val), va="center", fontsize=9)
+    for index, value in enumerate(rates):
+        ax.text(value + 0.05, index, "{:.2f}%".format(value), va="center", fontsize=9)
     fig.tight_layout()
     return fig
 
 
-def chart_q2(df):
-    """Q2: Bar + line chart — transaction volume and fraud rate by amount band."""
+def chart_q2(rows):
+    """Q2: Bar + line chart - transaction volume and fraud rate by amount band."""
     import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
-    labels = df["amount_band"].str.replace(r"^\d+_", "", regex=True)
-    x = range(len(labels))
+    labels = [re.sub(r"^\d+_", "", row["amount_band"]) for row in rows]
+    x_values = list(range(len(labels)))
+    totals = [number(row, "total_transactions") for row in rows]
+    rates = [pct(row) for row in rows]
+
     fig, ax1 = plt.subplots(figsize=(10, 5))
-    ax1.bar(x, df["total_transactions"], color="#4c72b0", alpha=0.7, label="Total Txns")
+    ax1.bar(x_values, totals, color="#4c72b0", alpha=0.7, label="Total Txns")
     ax1.set_ylabel("Total Transactions", color="#4c72b0")
-    ax1.set_xticks(list(x))
+    ax1.set_xticks(x_values)
     ax1.set_xticklabels(labels, rotation=30, ha="right")
+
     ax2 = ax1.twinx()
-    ax2.plot(list(x), pct(df["fraud_rate"]),
-             color="#e05c5c", marker="o", label="Fraud Rate %")
+    ax2.plot(x_values, rates, color="#e05c5c", marker="o", label="Fraud Rate %")
     ax2.set_ylabel("Fraud Rate (%)", color="#e05c5c")
     ax1.set_title("Q2: Transaction Volume and Fraud Rate by Amount Band")
+
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(lines1 + lines2, labels1 + labels2, loc="upper right")
@@ -78,25 +107,30 @@ def chart_q2(df):
     return fig
 
 
-def chart_q3(df):
-    """Q3: Grouped bar chart — fraud rate by card network and card type."""
+def chart_q3(rows):
+    """Q3: Grouped bar chart - fraud rate by card network and card type."""
     import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
-    import numpy as np  # pylint: disable=import-outside-toplevel
-    df = df.copy()
-    df["fraud_rate_pct"] = pct(df["fraud_rate"])
-    networks = sorted(df["card4"].unique())
-    card_types = sorted(df["card6"].unique())
-    x = np.arange(len(networks))
+    networks = sorted(set(row["card4"] for row in rows))
+    card_types = sorted(set(row["card6"] for row in rows))
+    x_values = list(range(len(networks)))
     width = 0.8 / max(len(card_types), 1)
+
     fig, ax = plt.subplots(figsize=(11, 5))
-    for i, ctype in enumerate(card_types):
-        subset = df[df["card6"] == ctype]
+    for index, card_type in enumerate(card_types):
         rates = []
-        for net in networks:
-            row = subset[subset["card4"] == net]
-            rates.append(float(row["fraud_rate_pct"].values[0]) if len(row) else 0.0)
-        ax.bar(x + i * width, rates, width, label=str(ctype))
-    ax.set_xticks(x + width * (len(card_types) - 1) / 2)
+        for network in networks:
+            match = [
+                row for row in rows
+                if row["card6"] == card_type and row["card4"] == network
+            ]
+            rates.append(pct(match[0]) if match else 0.0)
+        offsets = [value + index * width for value in x_values]
+        ax.bar(offsets, rates, width, label=str(card_type))
+
+    ax.set_xticks([
+        value + width * (len(card_types) - 1) / 2
+        for value in x_values
+    ])
     ax.set_xticklabels(networks, rotation=20, ha="right")
     ax.set_ylabel("Fraud Rate (%)")
     ax.set_title("Q3: Fraud Rate by Card Network and Card Type")
@@ -105,33 +139,39 @@ def chart_q3(df):
     return fig
 
 
-def chart_q4(df):
-    """Q4: Horizontal bar chart — email domains by fraud rate."""
+def chart_q4(rows):
+    """Q4: Horizontal bar chart - email domains by fraud rate."""
     import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
     fig, ax = plt.subplots(figsize=(9, 8))
-    df_s = df.sort_values("fraud_rate", ascending=True)
-    rates = pct(df_s["fraud_rate"])
-    colors = ["#e05c5c" if r > 5 else "#4c72b0" for r in rates]
-    ax.barh(df_s["email_domain"], rates, color=colors)
+    sorted_rows = sorted(rows, key=lambda row: number(row, "fraud_rate"))
+    labels = [row["email_domain"] for row in sorted_rows]
+    rates = [pct(row) for row in sorted_rows]
+    colors = ["#e05c5c" if rate > 5 else "#4c72b0" for rate in rates]
+    ax.barh(labels, rates, color=colors)
     ax.set_xlabel("Fraud Rate (%)")
-    ax.set_title("Q4: Top Email Domains — Fraud Rate\n(red = >5% fraud rate)")
+    ax.set_title("Q4: Top Email Domains - Fraud Rate\n(red = >5% fraud rate)")
     fig.tight_layout()
     return fig
 
 
-def chart_q5(df):
-    """Q5: Line chart — daily transaction volume and fraud rate over time."""
+def chart_q5(rows):
+    """Q5: Line chart - daily transaction volume and fraud rate over time."""
     import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
+    sorted_rows = sorted(rows, key=lambda row: number(row, "transaction_day"))
+    days = [number(row, "transaction_day") for row in sorted_rows]
+    totals = [number(row, "total_transactions") for row in sorted_rows]
+    rates = [pct(row) for row in sorted_rows]
+
     fig, ax1 = plt.subplots(figsize=(12, 5))
-    ax1.fill_between(df["transaction_day"], df["total_transactions"],
-                     alpha=0.4, color="#4c72b0", label="Total Txns")
+    ax1.fill_between(days, totals, alpha=0.4, color="#4c72b0", label="Total Txns")
     ax1.set_xlabel("Day")
     ax1.set_ylabel("Total Transactions", color="#4c72b0")
+
     ax2 = ax1.twinx()
-    ax2.plot(df["transaction_day"], pct(df["fraud_rate"]),
-             color="#e05c5c", linewidth=1.2, label="Fraud Rate %")
+    ax2.plot(days, rates, color="#e05c5c", linewidth=1.2, label="Fraud Rate %")
     ax2.set_ylabel("Fraud Rate (%)", color="#e05c5c")
     ax1.set_title("Q5: Daily Transaction Volume and Fraud Rate Over Time")
+
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(lines1 + lines2, labels1 + labels2, loc="upper left")
@@ -154,12 +194,12 @@ def main():
         ("q5", chart_q5),
     ]
 
-    for name, fn in chart_fns:
-        df = load_csv(name)
-        if df is None:
+    for name, chart_fn in chart_fns:
+        rows = load_csv(name)
+        if rows is None:
             continue
         try:
-            fig = fn(df)
+            fig = chart_fn(rows)
             save_chart(fig, name)
             import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
             plt.close(fig)

@@ -210,6 +210,7 @@ bash scripts/stage4.sh
 This script verifies:
 
 - Stage III repository artifacts through `scripts/check_stage3_artifacts.py`
+- Superset-ready SQLite database generation through `scripts/create_stage4_superset_db.py`
 - dashboard source assets through `scripts/check_stage4_assets.py`
 
 The dashboard source checklist currently includes:
@@ -225,15 +226,24 @@ The dashboard source checklist currently includes:
   - `output/stage3/feature_profile.csv`
   - `output/stage3/feature_importance_gbt.csv`
   - `output/stage3/feature_importance_rf.csv`
+- Superset-ready artifacts:
+  - `output/stage4/superset_dashboard.sqlite`
+  - `output/stage4/superset_dashboard_manifest.json`
+  - `output/stage4/model_metrics_long.csv`
+  - `output/stage4/best_model_summary.csv`
+  - `output/stage4/feature_profile_summary.csv`
 - report/dashboard documents:
   - `reports/stage3.md`
   - `reports/dashboard.md`
 
-Manual Superset work is still required after the checks pass:
+Superset dashboard build:
 
-1. Create datasets in Superset from the exported Stage II and Stage III files.
-2. Build one dashboard that covers data description, EDA insights, and model results.
-3. Publish the dashboard for the final presentation.
+1. On the cluster, load the dashboard tables into PostgreSQL:
+   `STAGE4_LOAD_POSTGRES=1 bash scripts/stage4.sh`.
+2. In Superset, use the existing PostgreSQL connection to `team20_projectdb`
+   and create datasets from the generated `stage4_*` tables.
+3. Create the charts listed in `reports/dashboard.md`.
+4. Publish one dashboard named `IEEE-CIS Fraud Risk: EDA to Spark ML`.
 
 ## Validation
 
